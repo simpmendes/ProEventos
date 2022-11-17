@@ -1,3 +1,5 @@
+import { environment } from './../../../../environments/environment';
+import { Observable } from 'rxjs';
 import { LoteService } from './../../../services/lote.service';
 import { ToastrService } from 'ngx-toastr';
 import { NgxSpinnerService } from 'ngx-spinner';
@@ -22,6 +24,9 @@ export class EventoDetalheComponent implements OnInit {
    form!: FormGroup;
    estadoSalvar = 'post';
    loteAtual = {id: 0, nome: '', indice: 0};
+   imagemURL = 'assets/cloudUpload.png';
+   file: File;
+
    get f(): any{
     return this.form.controls;
    }
@@ -72,6 +77,9 @@ export class EventoDetalheComponent implements OnInit {
         (evento: Evento) => {
           this.evento = {...evento};
           this.form.patchValue(this.evento);
+          if (this.evento.imagemURL !== '') {
+            this.imagemURL = environment.apiURL + 'resources/images/' + this.evento.imagemURL;
+          }
           this.evento.lotes.forEach(lote =>
             this.lotes.push(this.criarLote(lote)));
         },
@@ -97,7 +105,7 @@ export class EventoDetalheComponent implements OnInit {
       qtdPessoas: ['', [Validators.required, Validators.max(120000)]],
       telefone: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
-      imagemURL: ['', Validators.required],
+      imagemURL: [''],
       lotes: this.fb.array([])
     });
   }
@@ -188,11 +196,11 @@ export class EventoDetalheComponent implements OnInit {
     this.spinner.show();
     this.loteService.deleteLote(this.eventoId, this.loteAtual.id)
     .subscribe(
-      () =>{
+      () => {
         this.toastr.success('Lote deleteado com sucesso', 'Sucesso');
         this.lotes.removeAt(this.loteAtual.indice);
       },
-      (error: any) =>{
+      (error: any) => {
         this.toastr.error(`Erro ao tentar deletar o lote ${this.loteAtual.id}`, 'Erro');
         console.error(error);
       }
@@ -201,4 +209,26 @@ export class EventoDetalheComponent implements OnInit {
   declineDeleteLote(): void{
     this.modalRef.hide();
   }
+  onFileChange(ev: any): void{
+    const reader = new FileReader();
+    reader.onload = (event: any) => this.imagemURL = event.target.result;
+    this.file = ev.target.files;
+    reader.readAsDataURL(this.file[0]);
+    this.uploadImagem();
+  }
+
+  uploadImagem(): void{
+    this.spinner.show();
+    this.eventoService.postUpload(this.eventoId, this.file).subscribe(
+      () => {
+        this.carregarEvento();
+        this.toastr.success('Imagem atualizada com Sucesso', 'Sucesso!');
+      },
+      (error: any) => {
+        this.toastr.error('Erro ao fazer upload de Imagem', 'Erro!');
+        console.error(error);
+      }
+    ).add(() => this.spinner.hide());
+  }
+
 }
