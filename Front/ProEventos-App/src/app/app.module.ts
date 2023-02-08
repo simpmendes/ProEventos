@@ -1,7 +1,8 @@
+import { JwtInterceptor } from './interceptors/jwt.interceptor';
 import { LoteService } from './services/lote.service';
 import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
@@ -35,6 +36,8 @@ import { EventoListaComponent } from './components/eventos/evento-lista/evento-l
 import { UserComponent } from './components/user/user.component';
 import { LoginComponent } from './components/user/login/login.component';
 import { RegistrationComponent } from './components/user/registration/registration.component';
+import { UserService } from './services/user.service';
+import { HomeComponent } from './components/home/home.component';
 
 defineLocale('pt-br', ptBrLocale);
 @NgModule({
@@ -52,7 +55,8 @@ defineLocale('pt-br', ptBrLocale);
       EventoListaComponent,
       UserComponent,
       LoginComponent,
-      RegistrationComponent
+      RegistrationComponent,
+      HomeComponent
    ],
   imports: [
     BrowserModule,
@@ -73,10 +77,12 @@ defineLocale('pt-br', ptBrLocale);
       preventDuplicates: true,
       progressBar: true})
   ],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
+
   providers: [
   EventoService,
-  LoteService
+  LoteService,
+  UserService,
+  {provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true},
   ],
   bootstrap: [AppComponent]
 })

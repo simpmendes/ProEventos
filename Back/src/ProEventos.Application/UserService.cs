@@ -35,7 +35,7 @@ namespace ProEventos.Application
         {
             try
             {
-                var user = await _userManager.Users.SingleOrDefaultAsync(user => user.UserName == userUpdateDto.Username.ToLower());
+                var user = await _userManager.Users.SingleOrDefaultAsync(user => user.UserName == userUpdateDto.UserName.ToLower());
                 return await _signInManager.CheckPasswordSignInAsync(user, password, false);
             }
             catch (System.Exception ex)
@@ -45,14 +45,14 @@ namespace ProEventos.Application
             }
         }
 
-        public async Task<UserDto> CreateAccountAsync(UserDto userDto)
+        public async Task<UserUpdateDto> CreateAccountAsync(UserDto userDto)
         {
             try
             {
                 var user = _mapper.Map<User>(userDto);
                 var result = await _userManager.CreateAsync(user, userDto.Password);
                 if(result.Succeeded)
-                    return  _mapper.Map<UserDto>(user);
+                    return  _mapper.Map<UserUpdateDto>(user);
                 
                 return null;
                 
@@ -85,12 +85,18 @@ namespace ProEventos.Application
         {
             try
             {
-                var user  = await _userPersist.GetUserByUsernameAsync(userUpdateDto.Username);
+                var user  = await _userPersist.GetUserByUsernameAsync(userUpdateDto.UserName);
                 if (user == null) return null;
 
+                userUpdateDto.Id = user.Id;
+
                 _mapper.Map(userUpdateDto, user);
+
+                if(userUpdateDto.Password!= null){
                 var token = await _userManager.GeneratePasswordResetTokenAsync(user);
-                var result = await _userManager.ResetPasswordAsync(user, token, userUpdateDto.Password);
+                await _userManager.ResetPasswordAsync(user, token, userUpdateDto.Password);
+                }
+                
                 _userPersist.Update<User>(user);
                 if (await _userPersist.SaveChangesAsync())
                 {
