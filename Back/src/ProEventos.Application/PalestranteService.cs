@@ -13,7 +13,6 @@ namespace ProEventos.Application
 {
     public class PalestranteService : IPalestranteService
     {
-        private readonly IGeralPersist _geralPersist;
         private readonly IPalestrantePersist _palestrantePersist;
         private readonly IMapper _mapper;
         public PalestranteService( IPalestrantePersist palestrantePersist, 

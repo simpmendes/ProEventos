@@ -24,6 +24,7 @@ import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { defineLocale } from 'ngx-bootstrap/chronos';
 import { ptBrLocale } from 'ngx-bootstrap/locale';
 import { NgxCurrencyModule } from 'ngx-currency';
+import { TabsModule } from 'ngx-bootstrap/tabs';
 
 import { DateTimeFormatPipe } from './helpers/DateTimeFormat.pipe';
 
@@ -39,6 +40,10 @@ import { LoginComponent } from './components/user/login/login.component';
 import { RegistrationComponent } from './components/user/registration/registration.component';
 import { UserService } from './services/user.service';
 import { HomeComponent } from './components/home/home.component';
+import { PerfilDetalheComponent } from './components/user/perfil/perfil-detalhe/perfil-detalhe.component';
+import { PalestranteListaComponent } from './components/palestrantes/palestrante-lista/palestrante-lista.component';
+import { PalestranteDetalheComponent } from './components/palestrantes/palestrante-detalhe/palestrante-detalhe.component';
+import { RedesSociaisComponent } from './components/redesSociais/redesSociais.component';
 
 defineLocale('pt-br', ptBrLocale);
 @NgModule({
@@ -52,12 +57,16 @@ defineLocale('pt-br', ptBrLocale);
       ContatosComponent,
       DashboardComponent,
       PerfilComponent,
+      PerfilDetalheComponent,
       EventoDetalheComponent,
       EventoListaComponent,
       UserComponent,
       LoginComponent,
       RegistrationComponent,
-      HomeComponent
+      HomeComponent,
+      PalestranteListaComponent,
+      PalestranteDetalheComponent,
+      RedesSociaisComponent
    ],
   imports: [
     BrowserModule,
@@ -71,6 +80,7 @@ defineLocale('pt-br', ptBrLocale);
     BsDropdownModule.forRoot(),
     BsDatepickerModule.forRoot(),
     PaginationModule.forRoot(),
+    TabsModule.forRoot(),
     ModalModule.forRoot(),
     NgxSpinnerModule,
     NgxCurrencyModule,
